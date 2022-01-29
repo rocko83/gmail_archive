@@ -4,10 +4,9 @@ import smtplib
 
 
 class MyMail:
-    def __init__(self,mail_account, password, box = 'inbox', readonly = True):
-        SMTP_SERVER = "imap.gmail.com"
-        SMTP_PORT = 993
-        self.mail = imaplib.IMAP4_SSL(SMTP_SERVER)
+    def __init__(self,mail_account, password, box = 'inbox', readonly = True, apiserver="imap.gmail.com", port=993):
+
+        self.mail = imaplib.IMAP4_SSL(host=apiserver ,port=port)
         self.mail.login(mail_account, password)
         self.mail.select(box, readonly=readonly)
     def search_mail(self,search):

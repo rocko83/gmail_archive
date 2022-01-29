@@ -22,7 +22,10 @@ def read_email_from_gmail():
         credentials = Config(args.cred)
         mymail = MyMail(
             mail_account=credentials.get_data("mail"),
-            password=credentials.get_data("password")
+            password=credentials.get_data("password"),
+            apiserver=credentials.get_data("apiserver"),
+            port=credentials.get_data("port")
+
         )
         mails = mymail.search_mail('(FROM "no-reply@accounts.google.com")')
 

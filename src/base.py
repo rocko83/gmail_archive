@@ -19,16 +19,38 @@ class Base:
             MFULLFILEPATH text,
             MMSGID TEXT PRIMARY KEY)''')
 
-    def __execute_query(self, query):
+    def __execute_insert(self, query):
         try:
             self.cur = self.con.cursor()
             self.cur.execute(query)
+            self.cur.fetchall()
             self.con.commit()
             self.cur.close()
         except Exception as e:
             logging.error(f"Failed to execute query \'{query}\'. MSG=\'{e}\'")
+            exit(1)
         else:
             logging.debug(f"Database record written successfull {query}")
+    def __execute_query(self, query):
+        try:
+            self.cur = self.con.cursor()
+            self.cur.execute(query)
+            data = self.cur.fetchall()
+            self.con.commit()
+            self.cur.close()
+        except Exception as e:
+            logging.error(f"Failed to execute query \'{query}\'. MSG=\'{e}\'")
+            exit(1)
+        else:
+            logging.debug(f"Database record written successfull {query}")
+        finally:
+            return data
+    def get_mail_by_msgid(self,msgid):
+        return self.__execute_query(F'''
+            SELECT MMSGID
+            FROM MAIL
+            WHERE MMSGID == '{msgid}'
+        ''')
     def register_mail(
             self,
             MAIL_TO,
@@ -54,7 +76,7 @@ class Base:
         #     '{MAIL_FULLFILEPATH}',
         #     '{MAIL_MSGID}')
         # ''')
-        self.__execute_query(f'''
+        self.__execute_insert(f'''
             INSERT INTO MAIL(MTO,MFROM,MSUBJECT,MDATE,MTZ,MFILENAME,MFILEPATH,MFULLFILEPATH,MMSGID)
             SELECT '{MAIL_TO}',
                     '{MAIL_FROM}',

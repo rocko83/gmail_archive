@@ -7,8 +7,7 @@ from src.base import Base
 from src.myfile import MyFile
 
 class Archive:
-    def __init__(self, basedir="archive", delete_mail=False):
-        self.delete_mail = delete_mail
+    def __init__(self, basedir="archive"):
         self.basedir = basedir
         self.__create_directory(basedir)
         try:
@@ -24,9 +23,6 @@ class Archive:
             logging.debug(f"Created_directory {diretory}")
         else:
             logging.debug(f"Directory {diretory} allready exist")
-    def __delete_email(self,mail):
-        if self.delete_mail == True:
-            logging.info(f"FAKE mail deleted")
     def archive_mail(self,mail):
         if "," in mail['date']:
             date_mod = 0
@@ -41,28 +37,37 @@ class Archive:
             f"{date_year}/{date_month}/{date_day}/{date_time}",
             '%Y/%b/%d/%H:%M:%S')
         mail_path_to_archive = f"{self.basedir}/{date.year}/{date.month}/{date.day}"
-        mail_file_to_archive = f"{mail['Message-ID'].replace(' ','_').replace('<','').replace('>','')}.eml"
+        mail_file_to_archive = f"{mail['Message-ID'].replace(' ','_').replace('<','').replace('>','')}.eml".replace('/','_')
         mail_file_fullpath_to_archive = f"{mail_path_to_archive}/{mail_file_to_archive}"
         self.__create_directory(mail_path_to_archive)
         try:
-            mailfile = MyFile(mail_file_fullpath_to_archive)
-            mailfile.write(str(mail))
-            mailfile.close()
-            self.data.register_mail(
-                MAIL_TO=mail['To'],
-                MAIL_FROM=mail['From'],
-                MAIL_SUBJECT=mail['Subject'],
-                MAIL_DATE=date,
-                MAIL_TZ=date_timezone,
-                MAIL_FILENAME=mail_file_to_archive,
-                MAIL_FILEPATH=mail_path_to_archive,
-                MAIL_FULLFILEPATH=mail_file_fullpath_to_archive,
-                MAIL_MSGID=mail['Message-ID']
-            )
+            if self.data.get_mail_by_msgid(mail['Message-ID']) == []:
+                logging.debug(f"Mail {mail['Message-ID'] } dot not exist in archive. Preparing to archive now.")
+                mailfile = MyFile(mail_file_fullpath_to_archive)
+                mailfile.write(str(mail))
+                mailfile.close()
+                self.data.register_mail(
+                    MAIL_TO=str(mail['To']).replace('\'','\'\''),
+                    MAIL_FROM=str(mail['From']).replace('\'','\'\''),
+                    MAIL_SUBJECT=str(mail['Subject']).replace('\'','\'\''),
+                    MAIL_DATE=date,
+                    MAIL_TZ=date_timezone,
+                    MAIL_FILENAME=mail_file_to_archive,
+                    MAIL_FILEPATH=mail_path_to_archive,
+                    MAIL_FULLFILEPATH=mail_file_fullpath_to_archive,
+                    MAIL_MSGID=mail['Message-ID']
+                )
+                logging.info(f"Mail {mail['Message-ID'] } Archived")
+            else:
+                logging.info(f"Mail {mail['Message-ID'] } allready exist")
+            # self.__delete_email(mail=mail)
+
         except Exception as e:
-            logging.error(f"Fail to archive mail {mail['Message-ID']} to path {mail_file_fullpath_to_archive}")
+            logging.error(f"Fail to archive mail {mail['Message-ID']} to path {mail_file_fullpath_to_archive}, MSG={e}")
+            exit(1)
         else:
-            logging.info(f"Mail {mail['Message-ID']} archived")
+            logging.info(f"Mail {mail['Message-ID']} processed.")
+            logging.info(f"Mail {mail['Message-ID']}, {mail['To']}, {mail['From']}, {mail['Subject']}.")
 
 
 

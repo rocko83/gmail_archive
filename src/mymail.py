@@ -7,13 +7,24 @@ import logging
 
 class MyMail:
     def __init__(self,mail_account, password, box = 'inbox', readonly = True, apiserver="imap.gmail.com", port=993):
-
         self.mail = imaplib.IMAP4_SSL(host=apiserver ,port=port)
         self.mail.login(mail_account, password)
         self.mail.select(box, readonly=readonly)
     def search_mail(self,search):
         self.data = self.mail.search(None, search )
+        # self.data = self.data[0].split(b' ')
+        # return self.data
         return self.data[1][0].split()
+    def delete_mail(self,id,msgid):
+        index = str(id, 'UTF-8')
+        try:
+            # logging.info("Fake mail delete")
+            self.mail.store(index, '+FLAGS', '\\Deleted')
+            self.mail.expunge()
+        except Exception as e:
+            logging.error(f"Mail {msgid} Could not be delete, MSG={e}")
+        finally:
+            logging.info(f"Mail {msgid} deleted with success")
     def get_mails(self,id):
         index = str(id, 'UTF-8')
         responses = self.mail.fetch(index,'(RFC822)')

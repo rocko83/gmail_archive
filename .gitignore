@@ -1,1 +1,6 @@
-^*/credentials.json
+*credentials.json
+*__init__.py
+venv/
+tmp/
+etc/
+mails/

@@ -50,5 +50,5 @@ def read_email_from_gmail():
     except Exception as e:
         traceback.print_exc() 
         print(str(e))
-
-read_email_from_gmail()
+if __name__ == "__main__":
+    read_email_from_gmail()

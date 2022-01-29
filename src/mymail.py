@@ -1,6 +1,8 @@
 import imaplib
 import email
+import email.parser
 import smtplib
+import logging
 
 
 class MyMail:
@@ -15,13 +17,18 @@ class MyMail:
     def get_mails(self,id):
         index = str(id, 'UTF-8')
         responses = self.mail.fetch(index,'(RFC822)')
+        # encode = email.parser.BytesParser().parsebytes(responses)
         multi_response = []
         # print(f"one responses = {responses}")
         for response in responses:
             arr = response[0]
             if isinstance(arr, tuple):
+                # msg = email.message_from_string(str(arr[1],"ISO-8859-1",))
                 msg = email.message_from_string(str(arr[1],"ISO-8859-1",))
                 multi_response.append(msg)
         return multi_response[0]
+    def close(self):
+        self.mail.close()
+        self.mail.logout()
 
 

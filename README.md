@@ -27,4 +27,5 @@ python run.py --cred etc/credentials.json --output_dir archive_mail  --search 'A
 python run.py --cred etc/credentials.json --output_dir archive_mail  --search '(FROM "mail@from.com")'  --delete
 python run.py --cred etc/credentials.json --output_dir archive_mail  --search '(UID "<0100018826430649-4c257cec-45af-43d4-9161-34492ebe33bd-000000@email.amazonses.com>")'  --delete
 python run.py --cred etc/credentials.json --output_dir archive_mail  --search '(NOT SINCE "1-Jan-2019")'
+python run.py --cred etc/credentials.json --output_dir archive_mail  --search '(HEADER Message-ID "<0100018826430649-4c257cec-45af-43d4-9161-34492ebe33bd-000000@email.amazonses.com>")' 
 ```

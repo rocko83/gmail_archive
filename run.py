@@ -59,7 +59,7 @@ def read_email_from_gmail():
             logging.info("No mail returned")
             exit(0)
         else:
-            logging.info(f"Theres {len(mails)} mails to process")
+            logging.info(f"Progress {len(mails)}")
 
         # index = [ 1,9,3,4,5,6]
         # print(index)
@@ -78,9 +78,9 @@ def read_email_from_gmail():
                 if count == args.mails + 1 :
                     exit(0)
                 else:
-                    logging.info(f"{count}/{args.mails} Messages to process.")
+                    logging.info(f"{args.mails - count}/{args.mails} Messages to process.")
             else:
-                logging.info(f"{count}/{len(index)} Messages to process.")
+                logging.info(f"{len(index) - count}/{len(index)} Messages to process.")
             b = str(id).encode('utf-8')
 
             mail = mymail.get_mails(b)

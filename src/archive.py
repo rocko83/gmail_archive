@@ -24,10 +24,17 @@ class Archive:
         else:
             logging.debug(f"Directory {diretory} allready exist")
     def archive_mail(self,mail):
-        if "," in mail['date']:
-            date_mod = 0
+        logging.debug(f"Starting process for mail {mail['Message-ID'] }")
+        if mail['date'] is not None:
+            if "," in mail['date']:
+                date_mod = 0
+            else:
+                date_mod = -1
         else:
-            date_mod = -1
+            logging.error("Fail to get mail information. This mail was not archived neither deleted.")
+            logging.error(f"Dumping all data: {mail}")
+            return
+
         date_year = str(mail['date']).split()[3 + date_mod]
         date_month = str(mail['date']).split()[2 + date_mod]
         date_day = str(mail['date']).split()[1 + date_mod]

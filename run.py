@@ -84,9 +84,11 @@ def read_email_from_gmail():
             b = str(id).encode('utf-8')
 
             mail = mymail.get_mails(b)
-            archive.archive_mail(mail)
-            if args.delete == True:
-                mymail.delete_mail(id=b, msgid=mail['Message-ID'])
+            if archive.archive_mail(mail) == True:
+                if args.delete == True:
+                    mymail.delete_mail(id=b, msgid=mail['Message-ID'])
+            else:
+                logging.error(f"Mail {b} not archive by previus ERROR.")
         mymail.close()
 
 

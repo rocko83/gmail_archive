@@ -25,29 +25,37 @@ class Archive:
             logging.debug(f"Directory {diretory} allready exist")
     def archive_mail(self,mail):
         logging.debug(f"Starting process for mail {mail['Message-ID'] }")
-        if mail['date'] is not None:
+        # if mail['date'] is not None:
+        #     if "," in mail['date']:
+        #         date_mod = 0
+        #     else:
+        #         date_mod = -1
+        # else:
+        #     logging.error("Fail to get mail information. This mail was not archived neither deleted.")
+        #     logging.error(f"Dumping all data: {mail}")
+        #     return False
+        # print(mail)
+        try:
             if "," in mail['date']:
                 date_mod = 0
             else:
                 date_mod = -1
-        else:
-            logging.error("Fail to get mail information. This mail was not archived neither deleted.")
-            logging.error(f"Dumping all data: {mail}")
-            return
+            date_year = str(mail['date']).split()[3 + date_mod]
+            date_month = str(mail['date']).split()[2 + date_mod]
+            date_day = str(mail['date']).split()[1 + date_mod]
+            date_time = str(mail['date']).split()[4 + date_mod]
+            if len(str(mail['date']).split()) < 5:
+                date_timezone = str(mail['date']).split()[5 + date_mod]
+            else:
+                date_timezone = "GMT"
+            date = datetime.datetime.strptime(
+                f"{date_year}/{date_month}/{date_day}/{date_time}",
+                '%Y/%b/%d/%H:%M:%S')
+            mail_path_to_archive = f"{self.basedir}/{date.year}/{date.month}/{date.day}"
+            mail_file_to_archive = f"{mail['Message-ID'].replace(' ','_').replace('<','').replace('>','')}.eml".replace('/','_')
+            mail_file_fullpath_to_archive = f"{mail_path_to_archive}/{mail_file_to_archive}"
+            self.__create_directory(mail_path_to_archive)
 
-        date_year = str(mail['date']).split()[3 + date_mod]
-        date_month = str(mail['date']).split()[2 + date_mod]
-        date_day = str(mail['date']).split()[1 + date_mod]
-        date_time = str(mail['date']).split()[4 + date_mod]
-        date_timezone = str(mail['date']).split()[5 + date_mod]
-        date = datetime.datetime.strptime(
-            f"{date_year}/{date_month}/{date_day}/{date_time}",
-            '%Y/%b/%d/%H:%M:%S')
-        mail_path_to_archive = f"{self.basedir}/{date.year}/{date.month}/{date.day}"
-        mail_file_to_archive = f"{mail['Message-ID'].replace(' ','_').replace('<','').replace('>','')}.eml".replace('/','_')
-        mail_file_fullpath_to_archive = f"{mail_path_to_archive}/{mail_file_to_archive}"
-        self.__create_directory(mail_path_to_archive)
-        try:
             if self.data.get_mail_by_msgid(mail['Message-ID']) == []:
                 logging.debug(f"Mail {mail['Message-ID'] } dot not exist in archive. Preparing to archive now.")
                 mailfile = MyFile(mail_file_fullpath_to_archive)
@@ -66,15 +74,16 @@ class Archive:
                 )
                 logging.info(f"Mail {mail['Message-ID'] } Archived")
             else:
-                logging.info(f"Mail {mail['Message-ID'] } allready exist")
-            # self.__delete_email(mail=mail)
+                logging.debug(f"Mail {mail['Message-ID'] } allready exist")
 
         except Exception as e:
-            logging.error(f"Fail to archive mail {mail['Message-ID']} to path {mail_file_fullpath_to_archive}, MSG={e}")
-            exit(1)
+            logging.error(mail)
+            logging.error(f"Fail to archive mail, MSG={e}")
+            return False
         else:
             logging.info(f"Mail {mail['Message-ID']} processed.")
             logging.info(f"Mail {mail['Message-ID']}, {mail['To']}, {mail['From']}, {mail['Subject']}.")
+            return True
 
 
 

@@ -29,3 +29,8 @@ python run.py --cred etc/credentials.json --output_dir archive_mail  --search '(
 python run.py --cred etc/credentials.json --output_dir archive_mail  --search '(NOT SINCE "1-Jan-2019")'
 python run.py --cred etc/credentials.json --output_dir archive_mail  --search '(HEADER Message-ID "<0100018826430649-4c257cec-45af-43d4-9161-34492ebe33bd-000000@email.amazonses.com>")' 
 ```
+
+
+# Know Bugs
+
+* If LABEL DATE do not have Timezone attached will set GMT by code.

@@ -48,7 +48,14 @@ def read_email_from_gmail():
                 port=credentials.get_data("port")
             )
 
+        # mymail.get_folders()
+        #
+        # exit(0)
+
+
         mails = mymail.search_mail(args.search)
+
+
 
         #Initialize archive
         archive = Archive(basedir=args.output_dir)
@@ -60,11 +67,6 @@ def read_email_from_gmail():
             exit(0)
         else:
             logging.info(f"Progress {len(mails)}")
-
-        # index = [ 1,9,3,4,5,6]
-        # print(index)
-        # print(sorted(index))
-        # print(sorted(index,reverse=True))
         index = []
         for id in mails:
             index.append(int(str(id, 'UTF-8')))

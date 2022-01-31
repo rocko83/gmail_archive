@@ -15,6 +15,12 @@ class MyMail:
         # self.data = self.data[0].split(b' ')
         # return self.data
         return self.data[1][0].split()
+    def get_folders(self):
+        # for folder in self.mail.list()[1]:
+        #     print(folder)
+        for i in self.mail.list()[1]:
+            l = i.decode().split(' "/" ')
+            print(l[0] + " = " + l[1])
     def delete_mail(self,id,msgid):
         index = str(id, 'UTF-8')
         try:

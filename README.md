@@ -1,5 +1,11 @@
 # gmail_archive
 
+This tool sync your e-mail from google or any other service providing IMAP protocol.
+
+It can just sync or sync and delete (move).
+
+It'll save your mails in files *.iml and has a sqlite3 database with index about every synced mail.
+
 # TODO
 
 * database
